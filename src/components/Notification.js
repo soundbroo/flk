@@ -10,7 +10,7 @@ const Notification = ({ title = "", notifications = [], isActive, close }) => (
         <img src={successFilledIcon} alt="notification status" />
         <span>{title}</span>
       </div>
-      <button className="notification__close" type="button" onClick={close}>
+      <button className="close-btn" type="button" onClick={close}>
         <img src={closeIcon} alt="close notification" />
       </button>
     </div>

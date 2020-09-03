@@ -12,11 +12,18 @@ const FilesList = ({
   filesCount,
   search,
   setSearch,
+  openViewer,
 }) => {
   const handleSearch = (e) => setSearch(e.target.value);
   const handleDelete = (index, name) => {
     const newFiles = files.filter((el, i) => i !== index && name !== el.name);
     setFiles(newFiles);
+  };
+  const handleView = (file) => {
+    console.log(file);
+    const reader = new FileReader();
+    reader.onloadend = (e) => openViewer(file.name, e.target.result);
+    reader.readAsText(file, "CP1251");
   };
 
   return (
@@ -31,20 +38,20 @@ const FilesList = ({
         </div>
       </div>
       <div className="files-list__items">
-        {filteredFiles.map(({ name }, index) => (
-          <div key={`${name}_${index}`} className="files-list__item">
+        {filteredFiles.map((file, index) => (
+          <div key={`${file.name}_${index}`} className="files-list__item">
             <span className="files-list__item__name">
               <img src={successOutlinedIcon} alt="processing status" />
-              <span>{name}</span>
+              <span>{file.name}</span>
             </span>
             <span className="files-list__item__status">Проверено</span>
             <div className="files-list__item__control">
-              <button type="button">
+              <button type="button" onClick={() => handleView(file)}>
                 <img src={viewIcon} alt="view document" />
               </button>
               <button
                 type="button"
-                onClick={(index) => handleDelete(index, name)}
+                onClick={(index) => handleDelete(index, file.name)}
               >
                 <img src={deleteIcon} alt="delete document" />
               </button>

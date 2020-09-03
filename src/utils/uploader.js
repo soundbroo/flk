@@ -1,8 +1,8 @@
 // const MAX_FILE_SIZE = 10e6;
 const MAX_FILE_SIZE = 1000;
 
-export const upload = (openNotification, setFiles) => (e) => {
-  const files = e.target.files;
+export const upload = (openNotification, files, setFiles) => {
+  console.log("files", files);
   if (files.length > 10) alert("Больше десяти файлов нельзя");
   const filesArray = Object.values(files);
 
@@ -28,5 +28,7 @@ export const upload = (openNotification, setFiles) => (e) => {
     notifications.push(`Файлов успешно добавлено: ${validFiles.length}`);
 
   openNotification(notifications);
-  setFiles(validFiles);
+  setFiles((prevFiles) => {
+    return [...prevFiles, ...validFiles];
+  });
 };
