@@ -14,6 +14,7 @@ function App() {
   const [files, setFiles] = useState([]);
   const [search, setSearch] = useState("");
   const [isNotificationActive, setNotificationActive] = useState(false);
+  const [isNotificationHovered, setNotificationHovered] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const initialViewerState = {
     active: false,
@@ -22,9 +23,11 @@ function App() {
   };
   const [viewer, setViewer] = useState(initialViewerState);
 
-  const filteredFiles = files.filter(({ name }) =>
-    name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredFiles = files.map((el) => {
+    return Object.assign(el, {
+      hidden: !el.name.toLowerCase().includes(search.toLowerCase()),
+    });
+  });
 
   const handleCloseNotification = () => {
     setNotificationActive(false);
@@ -34,9 +37,15 @@ function App() {
     setNotifications([...notifications, ...newNotification]);
     setNotificationActive(true);
   };
+
+  const handleHoverNotification = () => setNotificationHovered(true);
+  const handleUnhoverNotification = () => setNotificationHovered(false);
+
   const handleCloseViewer = () => setViewer({ ...viewer, active: false });
   const handleOpenViewer = (fileName, content) =>
     setViewer({ ...viewer, active: true, fileName, content });
+
+  // console.log(isNotificationHovered);
 
   useEffect(() => {
     if (isNotificationActive)
@@ -44,9 +53,20 @@ function App() {
         setNotificationActive(false);
         setNotifications([]);
       }, 8000);
-  }, [isNotificationActive]);
 
-  console.log(files);
+    // if (isNotificationActive) {
+    //   const timerId = setInterval(function update() {
+    //     const timeoutId = setTimeout(() => {
+    //       setNotificationActive(false);
+    //       setNotificationHovered(false);
+    //       setNotifications([]);
+    //     }, 6000);
+    //     if (isNotificationHovered) {
+    //       clearTimeout(timeoutId);
+    //     }
+    //   }, 2000);
+    // }
+  }, [isNotificationActive]);
 
   return (
     <div className="app">
@@ -56,7 +76,6 @@ function App() {
           Проверка файлов отчетности ФНС, ПФР, ФСС, РАР
         </div>
         <Uploader
-          files={files}
           setFiles={setFiles}
           openNotification={handleOpenNotification}
         />
@@ -83,6 +102,8 @@ function App() {
         notifications={notifications}
         isActive={isNotificationActive}
         close={handleCloseNotification}
+        mouseEnter={handleHoverNotification}
+        mouseLeave={handleUnhoverNotification}
       />
       <FilesViewer viewer={viewer} close={handleCloseViewer} />
     </div>

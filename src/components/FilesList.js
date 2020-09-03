@@ -39,7 +39,12 @@ const FilesList = ({
       </div>
       <div className="files-list__items">
         {filteredFiles.map((file, index) => (
-          <div key={`${file.name}_${index}`} className="files-list__item">
+          <div
+            key={`${file.name}_${index}`}
+            className={`files-list__item ${
+              file.hidden ? " files-list__item_hidden" : ""
+            }`}
+          >
             <span className="files-list__item__name">
               <img src={successOutlinedIcon} alt="processing status" />
               <span>{file.name}</span>

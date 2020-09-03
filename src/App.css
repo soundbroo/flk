@@ -150,6 +150,15 @@
   justify-content: space-between;
   height: 58px;
   padding: 0 24px;
+  transition-property: height, opacity;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+}
+
+.files-list__item_hidden {
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
 }
 
 .files-list__item__name {
