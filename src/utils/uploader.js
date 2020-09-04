@@ -2,59 +2,71 @@ const MAX_FILE_SIZE = 10e6;
 // const MAX_FILE_SIZE = 1000;
 
 export const upload = (openNotification, currentFiles, newFiles, setFiles) => {
-  const notifications = [];
   // ToDo: Проверять количество уже загруженных файлов
-  if (newFiles.length > 10)
-    notifications.push("Слишком много файлов, будут загружены первые 10");
+  // ToDo: Сначала проверять формат, потом размер
+  if (currentFiles.length < 10) {
+    const notifications = [];
 
-  const filesArray = Object.values(newFiles);
+    if (currentFiles.length + newFiles.length > 10)
+      notifications.push(
+        `Слишком много файлов, будут загружены первые ${
+          10 - currentFiles.length
+        }`
+      );
 
-  const filesToUploadArray =
-    filesArray.length > 10 ? filesArray.splice(0, 10) : filesArray;
+    const filesArray = Object.values(newFiles);
 
-  const oversizedFiles = filesToUploadArray
-    .filter(({ size }) => size > MAX_FILE_SIZE)
-    .map(({ name }) => name);
+    const filesToUploadArray =
+      currentFiles.length + filesArray.length > 10
+        ? filesArray.splice(0, 10 - currentFiles.length)
+        : filesArray;
 
-  if (oversizedFiles.length) {
-    const notificationFiles = oversizedFiles.join(", ");
-    const multiple = oversizedFiles.length > 1;
-    const notification = `Файл${
-      multiple ? "ы" : ""
-    } ${notificationFiles} не был${multiple ? "и" : ""} загружен${
-      multiple ? "ы" : ""
-    }, ${multiple ? "их" : "его"} размер превышает 10 мб`;
-    notifications.push(notification);
-  }
+    const oversizedFiles = filesToUploadArray
+      .filter(({ size }) => size > MAX_FILE_SIZE)
+      .map(({ name }) => name);
 
-  const validSizeFiles = filesToUploadArray.filter(
-    ({ size }) => size <= MAX_FILE_SIZE
-  );
+    if (oversizedFiles.length) {
+      const notificationFiles = oversizedFiles.join(", ");
+      const multiple = oversizedFiles.length > 1;
+      const notification = `Файл${
+        multiple ? "ы" : ""
+      } ${notificationFiles} не был${multiple ? "и" : ""} загружен${
+        multiple ? "ы" : ""
+      }, ${multiple ? "их" : "его"} размер превышает 10 мб`;
+      notifications.push(notification);
+    }
 
-  const nonValidFormatedFiles = validSizeFiles
-    .filter(({ name }) => !["txt", "xml"].includes(name.slice(-3, name.length)))
-    .map(({ name }) => name);
+    const validSizeFiles = filesToUploadArray.filter(
+      ({ size }) => size <= MAX_FILE_SIZE
+    );
 
-  if (nonValidFormatedFiles.length) {
-    const notificationFiles = nonValidFormatedFiles.join(", ");
-    const multiple = nonValidFormatedFiles.length > 1;
-    const notification = `Файл${
-      multiple ? "ы" : ""
-    } ${notificationFiles} не был${multiple ? "и" : ""} загружен${
-      multiple ? "ы" : ""
-    }, так как име${multiple ? "ют" : "ет"} неподдерживаемый формат`;
-    notifications.push(notification);
-  }
+    const nonValidFormatedFiles = validSizeFiles
+      .filter(
+        ({ name }) => !["txt", "xml"].includes(name.slice(-3, name.length))
+      )
+      .map(({ name }) => name);
 
-  const validFiles = validSizeFiles.filter(({ name }) =>
-    ["txt", "xml"].includes(name.slice(-3, name.length))
-  );
+    if (nonValidFormatedFiles.length) {
+      const notificationFiles = nonValidFormatedFiles.join(", ");
+      const multiple = nonValidFormatedFiles.length > 1;
+      const notification = `Файл${
+        multiple ? "ы" : ""
+      } ${notificationFiles} не был${multiple ? "и" : ""} загружен${
+        multiple ? "ы" : ""
+      }, так как име${multiple ? "ют" : "ет"} неподдерживаемый формат`;
+      notifications.push(notification);
+    }
 
-  if (validFiles.length)
-    notifications.push(`Файлов успешно добавлено: ${validFiles.length}`);
+    const validFiles = validSizeFiles.filter(({ name }) =>
+      ["txt", "xml"].includes(name.slice(-3, name.length))
+    );
 
-  openNotification(notifications);
-  setFiles((prevFiles) => {
-    return [...prevFiles, ...validFiles];
-  });
+    if (validFiles.length)
+      notifications.push(`Файлов успешно добавлено: ${validFiles.length}`);
+
+    openNotification(notifications);
+    setFiles((prevFiles) => {
+      return [...prevFiles, ...validFiles];
+    });
+  } else openNotification(["Невозможно добавить более 10 файлов"]);
 };
