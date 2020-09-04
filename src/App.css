@@ -149,14 +149,6 @@
   overflow: auto;
 }
 
-.files-list > div::-webkit-scrollbar {
-  width: 6px;
-}
-
-.files-list > div::-webkit-scrollbar-thumb {
-  background: #e3e3e3;
-}
-
 .files-list_empty {
   height: 0;
   opacity: 0;
@@ -379,7 +371,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 0 9px 0;
 }
 
 .files-viewer__header > span {
@@ -397,4 +388,9 @@
   font-size: 14px;
   line-height: 17px;
   color: #0f1b4c;
+  height: calc(100% - 56px);
+}
+
+.files-viewer__content > pre {
+  height: 100%;
 }

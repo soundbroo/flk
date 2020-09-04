@@ -76,6 +76,7 @@ function App() {
           Проверка файлов отчетности ФНС, ПФР, ФСС, РАР
         </div>
         <Uploader
+          files={files}
           setFiles={setFiles}
           openNotification={handleOpenNotification}
         />

@@ -20,7 +20,6 @@ const FilesList = ({
     setFiles(newFiles);
   };
   const handleView = (file) => {
-    console.log(file);
     const reader = new FileReader();
     reader.onloadend = (e) => openViewer(file.name, e.target.result);
     reader.readAsText(file, "CP1251");

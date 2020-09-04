@@ -1,4 +1,6 @@
 import React, { createRef, useEffect } from "react";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { atomOneLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 import closeIcon from "../images/close.svg";
 
@@ -17,7 +19,17 @@ const FilesViewer = ({ viewer: { active, fileName, content }, close }) => {
           <img src={closeIcon} alt="close viewer" />
         </button>
       </div>
-      <div className="files-viewer__content">{content}</div>
+      <div className="files-viewer__content">
+        {content ? (
+          <SyntaxHighlighter
+            language="xml"
+            style={atomOneLight}
+            showLineNumbers
+          >
+            {content}
+          </SyntaxHighlighter>
+        ) : null}
+      </div>
     </div>
   );
 };
