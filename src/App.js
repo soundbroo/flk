@@ -79,23 +79,20 @@ function App() {
           setFiles={setFiles}
           openNotification={handleOpenNotification}
         />
-        {!files.length ? (
-          <img
-            src={placeholder}
-            alt="Files not uploaded"
-            className="placeholder"
-          />
-        ) : (
-          <FilesList
-            files={files}
-            filteredFiles={filteredFiles}
-            setFiles={setFiles}
-            filesCount={files.length}
-            search={search}
-            setSearch={setSearch}
-            openViewer={handleOpenViewer}
-          />
-        )}
+        <img
+          src={placeholder}
+          alt="Files not uploaded"
+          className={`placeholder${files.length ? " placeholder_hidden" : ""}`}
+        />
+        <FilesList
+          files={files}
+          filteredFiles={filteredFiles}
+          setFiles={setFiles}
+          filesCount={files.length}
+          search={search}
+          setSearch={setSearch}
+          openViewer={handleOpenViewer}
+        />
       </div>
       <Notification
         title="Тестовый заголовок"

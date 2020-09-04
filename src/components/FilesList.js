@@ -27,7 +27,7 @@ const FilesList = ({
   };
 
   return (
-    <div className="files-list">
+    <div className={`files-list${!files.length ? " files-list_empty" : ""}`}>
       <div className="files-list__header">
         <span>
           Загруженные файлы <span className="font__gray">{filesCount}</span>
@@ -38,31 +38,33 @@ const FilesList = ({
         </div>
       </div>
       <div className="files-list__items">
-        {filteredFiles.map((file, index) => (
-          <div
-            key={`${file.name}_${index}`}
-            className={`files-list__item ${
-              file.hidden ? " files-list__item_hidden" : ""
-            }`}
-          >
-            <span className="files-list__item__name">
-              <img src={successOutlinedIcon} alt="processing status" />
-              <span>{file.name}</span>
-            </span>
-            <span className="files-list__item__status">Проверено</span>
-            <div className="files-list__item__control">
-              <button type="button" onClick={() => handleView(file)}>
-                <img src={viewIcon} alt="view document" />
-              </button>
-              <button
-                type="button"
-                onClick={(index) => handleDelete(index, file.name)}
-              >
-                <img src={deleteIcon} alt="delete document" />
-              </button>
+        <div>
+          {filteredFiles.map((file, index) => (
+            <div
+              key={`${file.name}_${index}`}
+              className={`files-list__item${
+                file.hidden ? " files-list__item_hidden" : ""
+              }`}
+            >
+              <span className="files-list__item__name">
+                <img src={successOutlinedIcon} alt="processing status" />
+                <span>{file.name}</span>
+              </span>
+              <span className="files-list__item__status">Проверено</span>
+              <div className="files-list__item__control">
+                <button type="button" onClick={() => handleView(file)}>
+                  <img src={viewIcon} alt="view document" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(index) => handleDelete(index, file.name)}
+                >
+                  <img src={deleteIcon} alt="delete document" />
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
