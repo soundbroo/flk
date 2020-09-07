@@ -2,8 +2,8 @@ import React from "react";
 
 import searchIcon from "../images/search.svg";
 import successOutlinedIcon from "../images/success-outlined.svg";
-import viewIcon from "../images/view.svg";
-import deleteIcon from "../images/delete.svg";
+import { ReactComponent as ViewIcon } from "../images/view.svg";
+import { ReactComponent as DeleteIcon } from "../images/delete.svg";
 
 const FilesList = ({
   files,
@@ -15,8 +15,10 @@ const FilesList = ({
   openViewer,
 }) => {
   const handleSearch = (e) => setSearch(e.target.value);
-  const handleDelete = (index, name) => {
-    const newFiles = files.filter((el, i) => i !== index && name !== el.name);
+  const handleDelete = (fileKey) => {
+    const newFiles = files.filter(
+      ({ name }, index) => `${name}_${index}` !== fileKey
+    );
     setFiles(newFiles);
   };
   const handleView = (file) => {
@@ -38,31 +40,40 @@ const FilesList = ({
       </div>
       <div className="files-list__items">
         <div>
-          {filteredFiles.map((file, index) => (
-            <div
-              key={`${file.name}_${index}`}
-              className={`files-list__item${
-                file.hidden ? " files-list__item_hidden" : ""
-              }`}
-            >
-              <span className="files-list__item__name">
-                <img src={successOutlinedIcon} alt="processing status" />
-                <span>{file.name}</span>
-              </span>
-              <span className="files-list__item__status">Проверено</span>
-              <div className="files-list__item__control">
-                <button type="button" onClick={() => handleView(file)}>
-                  <img src={viewIcon} alt="view document" />
-                </button>
-                <button
-                  type="button"
-                  onClick={(index) => handleDelete(index, file.name)}
-                >
-                  <img src={deleteIcon} alt="delete document" />
-                </button>
+          {filteredFiles.map((file, index) => {
+            const fileKey = `${file.name}_${index}`;
+
+            return (
+              <div
+                key={fileKey}
+                className={`files-list__item${
+                  file.hidden ? " files-list__item_hidden" : ""
+                }`}
+              >
+                <span className="files-list__item__name">
+                  <img src={successOutlinedIcon} alt="processing status" />
+                  <span>{file.name}</span>
+                </span>
+                <span className="files-list__item__status">Проверено</span>
+                <div className="files-list__item__control">
+                  <button
+                    type="button"
+                    className="files-list__control files-list__control_view"
+                    onClick={() => handleView(file)}
+                  >
+                    <ViewIcon />
+                  </button>
+                  <button
+                    type="button"
+                    className="files-list__control files-list__control_shake files-list__control_delete"
+                    onClick={() => handleDelete(fileKey)}
+                  >
+                    <DeleteIcon />
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 
+import { NOTIFICATION_DURATION } from "../constants";
+
 const useNotifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [isNotificationActive, setNotificationActive] = useState(false);
@@ -19,11 +21,17 @@ const useNotifications = () => {
   const handleUnhoverNotification = () => setNotificationHovered(false);
 
   useEffect(() => {
-    if (isNotificationActive)
-      setTimeout(() => {
+    let timer;
+    if (isNotificationActive) {
+      timer = setTimeout(() => {
         setNotificationActive(false);
         setNotifications([]);
-      }, 8000);
+      }, NOTIFICATION_DURATION);
+    }
+    if (!isNotificationActive && timer) {
+      clearTimeout(timer);
+    }
+    return () => clearTimeout(timer);
   }, [isNotificationActive]);
 
   return [

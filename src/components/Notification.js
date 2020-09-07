@@ -3,6 +3,8 @@ import React from "react";
 import successFilledIcon from "../images/success-filled.svg";
 import closeIcon from "../images/close.svg";
 
+import { NOTIFICATION_DURATION } from "../constants";
+
 const Notification = ({
   title = "",
   notifications = [],
@@ -30,6 +32,12 @@ const Notification = ({
         <span>{el}</span>
       ))}
     </div>
+    <div
+      className="notification__timer"
+      style={{
+        animation: isActive ? `${NOTIFICATION_DURATION / 1000}s timer` : "none",
+      }}
+    />
   </div>
 );
 

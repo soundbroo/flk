@@ -1,24 +1,26 @@
-const MAX_FILE_SIZE = 10e6;
-// const MAX_FILE_SIZE = 1000;
+import { MAX_FILE_SIZE, MAX_FILES_TO_UPLOAD } from "../constants";
 
 export const upload = (openNotification, currentFiles, newFiles, setFiles) => {
   // ToDo: Проверять количество уже загруженных файлов
   // ToDo: Сначала проверять формат, потом размер
-  if (currentFiles.length < 10) {
+
+  const maxFileSizeText = `${MAX_FILE_SIZE / 1e6} мб`;
+
+  if (currentFiles.length < MAX_FILES_TO_UPLOAD) {
     const notifications = [];
 
-    if (currentFiles.length + newFiles.length > 10)
+    if (currentFiles.length + newFiles.length > MAX_FILES_TO_UPLOAD)
       notifications.push(
         `Слишком много файлов, будут загружены первые ${
-          10 - currentFiles.length
+          MAX_FILES_TO_UPLOAD - currentFiles.length
         }`
       );
 
     const filesArray = Object.values(newFiles);
 
     const filesToUploadArray =
-      currentFiles.length + filesArray.length > 10
-        ? filesArray.splice(0, 10 - currentFiles.length)
+      currentFiles.length + filesArray.length > MAX_FILES_TO_UPLOAD
+        ? filesArray.splice(0, MAX_FILES_TO_UPLOAD - currentFiles.length)
         : filesArray;
 
     const oversizedFiles = filesToUploadArray
@@ -32,7 +34,7 @@ export const upload = (openNotification, currentFiles, newFiles, setFiles) => {
         multiple ? "ы" : ""
       } ${notificationFiles} не был${multiple ? "и" : ""} загружен${
         multiple ? "ы" : ""
-      }, ${multiple ? "их" : "его"} размер превышает 10 мб`;
+      }, ${multiple ? "их" : "его"} размер превышает ${maxFileSizeText}`;
       notifications.push(notification);
     }
 
@@ -68,5 +70,8 @@ export const upload = (openNotification, currentFiles, newFiles, setFiles) => {
     setFiles((prevFiles) => {
       return [...prevFiles, ...validFiles];
     });
-  } else openNotification(["Невозможно добавить более 10 файлов"]);
+  } else
+    openNotification([
+      `Невозможно добавить более ${MAX_FILES_TO_UPLOAD} файлов`,
+    ]);
 };
