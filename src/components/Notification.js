@@ -28,8 +28,8 @@ const Notification = ({
       </button>
     </div>
     <div className="notification__content">
-      {notifications.map((el) => (
-        <span>{el}</span>
+      {notifications.map((el, index) => (
+        <span key={index}>{el}</span>
       ))}
     </div>
     <div

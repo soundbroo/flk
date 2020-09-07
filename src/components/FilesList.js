@@ -5,6 +5,8 @@ import successOutlinedIcon from "../images/success-outlined.svg";
 import { ReactComponent as ViewIcon } from "../images/view.svg";
 import { ReactComponent as DeleteIcon } from "../images/delete.svg";
 
+import { readFile } from "../utils/fileReader";
+
 const FilesList = ({
   files,
   filteredFiles,
@@ -15,16 +17,12 @@ const FilesList = ({
   openViewer,
 }) => {
   const handleSearch = (e) => setSearch(e.target.value);
+  const handleView = (file) => readFile(file, openViewer);
   const handleDelete = (fileKey) => {
     const newFiles = files.filter(
       ({ name }, index) => `${name}_${index}` !== fileKey
     );
     setFiles(newFiles);
-  };
-  const handleView = (file) => {
-    const reader = new FileReader();
-    reader.onloadend = (e) => openViewer(file.name, e.target.result);
-    reader.readAsText(file, "CP1251");
   };
 
   return (

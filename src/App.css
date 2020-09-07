@@ -213,6 +213,10 @@
   transition-timing-function: ease-out;
 }
 
+.files-list__item:hover {
+  background: #f5f8fb;
+}
+
 @media (max-width: 426px) {
   .files-list__item {
     padding: 0 12px;
@@ -296,12 +300,18 @@
 
 .files-list__search input {
   background: #edf0f5;
+  color: #2a495e;
   border-radius: 100px;
   outline: none;
   border: none;
   height: 34px;
   width: 100%;
   padding-left: 36px;
+}
+
+.files-list__search:hover input,
+.files-list__search input:focus {
+  background: #dbdfe49e;
 }
 
 .notification {
