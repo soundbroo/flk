@@ -1,3 +1,5 @@
+import AxiosService from "../api";
+
 import { MAX_FILE_SIZE, MAX_FILES_TO_UPLOAD } from "../constants";
 
 export const upload = (openNotification, currentFiles, newFiles, setFiles) => {
@@ -67,6 +69,11 @@ export const upload = (openNotification, currentFiles, newFiles, setFiles) => {
       notifications.push(`Файлов успешно добавлено: ${validFiles.length}`);
 
     openNotification(notifications);
+
+    const axios = new AxiosService();
+
+    axios.checkFiles(validFiles);
+
     setFiles((prevFiles) => {
       return [...prevFiles, ...validFiles];
     });
