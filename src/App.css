@@ -252,7 +252,7 @@
   font-size: 16px;
   line-height: 23px;
   color: #0074c6;
-  max-width: 300px;
+  max-width: 80%;
   width: 100%;
   min-width: 50px;
   overflow: hidden;
@@ -272,8 +272,8 @@
   font-size: 14px;
   line-height: 20px;
   color: rgba(42, 73, 94, 0.5);
-  text-align: right;
-  flex: 1;
+  text-align: center;
+  flex: 2;
 }
 
 .files-list__item__control {
@@ -453,20 +453,24 @@
 }
 
 .files-viewer__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   white-space: break-spaces;
   font-size: 14px;
   line-height: 17px;
   color: #0f1b4c;
-  height: calc(100% - 56px);
+  height: 100%;
 }
 
 .files-viewer__content > pre {
-  height: 70%;
+  flex: 5;
 }
 
 .files-viewer__asserts {
   background: rgb(250, 250, 250);
   padding: 12px;
+  flex: 1;
 }
 
 .files-list__control_delete:hover > svg > path {

@@ -7,7 +7,7 @@ import { ReactComponent as DeleteIcon } from "../images/delete.svg";
 
 import { readFile } from "../utils/fileReader";
 
-import { STATUSES } from "../constants";
+import { STATUSES, STATUSES_COLORS } from "../constants";
 
 const FilesList = ({
   files,
@@ -58,7 +58,10 @@ const FilesList = ({
                 <span className="files-list__item__direction">
                   {direction || null}
                 </span>
-                <span className="files-list__item__status">
+                <span
+                  className="files-list__item__status"
+                  style={{ color: STATUSES_COLORS[String(status)] }}
+                >
                   {STATUSES[String(status)]}
                 </span>
                 <div className="files-list__item__control">

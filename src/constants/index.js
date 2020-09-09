@@ -8,3 +8,10 @@ export const STATUSES = {
   error: "Ошибка",
   null: "Проверка...",
 };
+
+export const STATUSES_COLORS = {
+  true: "#1CAD1C",
+  false: "#e8a100",
+  error: "#ff2f00",
+  null: "#2a495e",
+};
