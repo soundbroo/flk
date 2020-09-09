@@ -2,15 +2,32 @@ import React, { useState } from "react";
 
 import { updateFilesState } from "../utils/uploader";
 
-const Uploader = ({ setFiles, openNotification }) => {
+const Uploader = ({
+  setFiles,
+  checkResults,
+  setCheckResults,
+  openNotification,
+}) => {
   const [dragging, setDragging] = useState(false);
 
   const handleChange = (newfiles) =>
-    updateFilesState(newfiles, setFiles, openNotification);
+    updateFilesState(
+      newfiles,
+      setFiles,
+      checkResults,
+      setCheckResults,
+      openNotification
+    );
   const handleDrop = (e) => {
     e.preventDefault();
     setDragging(false);
-    updateFilesState(e.dataTransfer.files, setFiles, openNotification);
+    updateFilesState(
+      e.dataTransfer.files,
+      setFiles,
+      checkResults,
+      setCheckResults,
+      openNotification
+    );
   };
   const handleDragEnter = () => setDragging(true);
   const handleDragLeave = (e) => {

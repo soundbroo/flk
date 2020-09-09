@@ -122,39 +122,53 @@ export const sendData = async (files) => {
   return await axios.checkFiles(files);
 };
 
-export const updateFilesState = (files, setFiles, openNotification) => {
+export const updateFilesState = (
+  files,
+  setFiles,
+  checkResults,
+  setCheckResults,
+  openNotification
+) => {
   const resultData = upload(openNotification, files, setFiles);
   setFiles((prevFiles) => {
     return [...prevFiles, ...resultData];
   });
 
-  sendData(resultData).then(({ data, status }) =>
-    status === 200 && data
-      ? setFiles((prevFiles) => {
-          return [
-            ...prevFiles.map((file) => {
-              const { ok: status, direction, asserts } = data[file.meta.oid];
-              return {
-                ...file,
-                check: { ...file.check, status, direction, asserts },
-              };
-            }),
-          ];
-        })
-      : (() => {
-          setFiles((prevFiles) => {
-            return [
-              ...prevFiles.map((file) => {
-                const { status } = data;
-                console.log(status);
-                return {
-                  ...file,
-                  check: { ...file.check, status },
-                };
-              }),
-            ];
-          });
-          openNotification([data.err_description]);
-        })()
-  );
+  sendData(resultData).then(({ data, status }) => {
+    if (status === 200) {
+      setCheckResults((prevFiles) => {
+        return { ...prevFiles, ...data };
+      });
+      setFiles((prevFiles) => {
+        console.log("checkResults", checkResults);
+        const newCheckResults = { ...checkResults, ...data };
+        return [
+          ...prevFiles.map((file) => {
+            const { ok: status, direction, asserts } = {
+              ...newCheckResults[file.meta.oid],
+            };
+            return {
+              ...file,
+              check: { ...file.check, status, direction, asserts },
+            };
+          }),
+        ];
+      });
+    } else {
+      // Todo: check and fix
+      setFiles((prevFiles) => {
+        return [
+          ...prevFiles.map((file) => {
+            const { status } = data;
+            console.log(status);
+            return {
+              ...file,
+              check: { ...file.check, status },
+            };
+          }),
+        ];
+      });
+      openNotification([data.err_description]);
+    }
+  });
 };

@@ -15,9 +15,10 @@ import placeholder from "./images/placeholder.svg";
 
 function App() {
   const [files, setFiles] = useState([]);
+  const [checkResults, setCheckResults] = useState({});
   const [search, setSearch] = useState("");
 
-  console.log(files);
+  console.log("checkResultsApp", checkResults);
 
   const [viewer, handleOpenViewer, handleCloseViewer] = useViewer();
 
@@ -47,6 +48,8 @@ function App() {
         </div>
         <Uploader
           setFiles={setFiles}
+          checkResults={checkResults}
+          setCheckResults={setCheckResults}
           openNotification={handleOpenNotification}
         />
         <img
