@@ -4,7 +4,10 @@ import { atomOneLight } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 import closeIcon from "../images/close.svg";
 
-const FilesViewer = ({ viewer: { active, fileName, content }, close }) => (
+const FilesViewer = ({
+  viewer: { active, fileName, content, asserts },
+  close,
+}) => (
   <div className={`files-viewer${active ? " files-viewer_active" : ""}`}>
     <div className="files-viewer__header">
       <span>{fileName}</span>
@@ -17,6 +20,15 @@ const FilesViewer = ({ viewer: { active, fileName, content }, close }) => (
         <SyntaxHighlighter language="xml" style={atomOneLight} showLineNumbers>
           {content}
         </SyntaxHighlighter>
+      ) : null}
+      {asserts ? (
+        <div className="files-viewer__asserts">
+          <ul>
+            {asserts.map((assert) => (
+              <li className="files-viewer__asserts-item">{assert}</li>
+            ))}
+          </ul>
+        </div>
       ) : null}
     </div>
   </div>

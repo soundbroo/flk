@@ -260,6 +260,14 @@
   text-overflow: ellipsis;
 }
 
+.files-list__item__direction {
+  font-size: 14px;
+  line-height: 20px;
+  color: rgba(42, 73, 94, 0.5);
+  text-transform: uppercase;
+  flex: 1;
+}
+
 .files-list__item__status {
   font-size: 14px;
   line-height: 20px;
@@ -453,7 +461,12 @@
 }
 
 .files-viewer__content > pre {
-  height: 100%;
+  height: 70%;
+}
+
+.files-viewer__asserts {
+  background: rgb(250, 250, 250);
+  padding: 12px;
 }
 
 .files-list__control_delete:hover > svg > path {

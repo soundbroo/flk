@@ -5,11 +5,12 @@ const useViewer = () => {
     active: false,
     fileName: null,
     content: null,
+    asserts: null,
   };
   const [viewer, setViewer] = useState(initialViewerState);
 
-  const handleOpenViewer = (fileName, content) =>
-    setViewer({ ...viewer, active: true, fileName, content });
+  const handleOpenViewer = (fileName, content, asserts) =>
+    setViewer({ ...viewer, active: true, fileName, content, asserts });
   const handleCloseViewer = () => setViewer({ ...viewer, active: false });
 
   return [viewer, handleOpenViewer, handleCloseViewer];

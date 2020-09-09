@@ -7,6 +7,8 @@ import { ReactComponent as DeleteIcon } from "../images/delete.svg";
 
 import { readFile } from "../utils/fileReader";
 
+import { STATUSES } from "../constants";
+
 const FilesList = ({
   files,
   filteredFiles,
@@ -17,11 +19,9 @@ const FilesList = ({
   openViewer,
 }) => {
   const handleSearch = (e) => setSearch(e.target.value);
-  const handleView = (file) => readFile(file, openViewer);
+  const handleView = (file, assetrs) => readFile(file, assetrs, openViewer);
   const handleDelete = (fileKey) => {
-    const newFiles = files.filter(
-      ({ name }, index) => `${name}_${index}` !== fileKey
-    );
+    const newFiles = files.filter(({ meta: { oid } }) => oid !== fileKey);
     setFiles(newFiles);
   };
 
@@ -38,40 +38,48 @@ const FilesList = ({
       </div>
       <div className="files-list__items">
         <div>
-          {filteredFiles.map((file, index) => {
-            const fileKey = `${file.name}_${index}`;
-
-            return (
+          {filteredFiles.map(
+            ({
+              file,
+              meta: { oid },
+              hidden,
+              check: { status, direction, asserts },
+            }) => (
               <div
-                key={fileKey}
+                key={oid}
                 className={`files-list__item${
-                  file.hidden ? " files-list__item_hidden" : ""
+                  hidden ? " files-list__item_hidden" : ""
                 }`}
               >
                 <span className="files-list__item__name">
                   <img src={successOutlinedIcon} alt="processing status" />
                   <span>{file.name}</span>
                 </span>
-                <span className="files-list__item__status">Проверено</span>
+                <span className="files-list__item__direction">
+                  {direction || null}
+                </span>
+                <span className="files-list__item__status">
+                  {STATUSES[String(status)]}
+                </span>
                 <div className="files-list__item__control">
                   <button
                     type="button"
                     className="files-list__control files-list__control_view"
-                    onClick={() => handleView(file)}
+                    onClick={() => handleView(file, asserts)}
                   >
                     <ViewIcon />
                   </button>
                   <button
                     type="button"
                     className="files-list__control files-list__control_shake files-list__control_delete"
-                    onClick={() => handleDelete(fileKey)}
+                    onClick={() => handleDelete(oid)}
                   >
                     <DeleteIcon />
                   </button>
                 </div>
               </div>
-            );
-          })}
+            )
+          )}
         </div>
       </div>
     </div>

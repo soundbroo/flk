@@ -17,6 +17,8 @@ function App() {
   const [files, setFiles] = useState([]);
   const [search, setSearch] = useState("");
 
+  console.log(files);
+
   const [viewer, handleOpenViewer, handleCloseViewer] = useViewer();
 
   const [
@@ -29,9 +31,10 @@ function App() {
     handleUnhoverNotification,
   ] = useNotifications();
 
-  const filteredFiles = files.map((el) => {
-    return Object.assign(el, {
-      hidden: !el.name.toLowerCase().includes(search.toLowerCase()),
+  const filteredFiles = files.map((file) => {
+    return Object.assign(file, {
+      ...file,
+      hidden: !file.file.name.toLowerCase().includes(search.toLowerCase()),
     });
   });
 
@@ -43,7 +46,6 @@ function App() {
           Проверка файлов отчетности ФНС, ПФР, ФСС, РАР
         </div>
         <Uploader
-          files={files}
           setFiles={setFiles}
           openNotification={handleOpenNotification}
         />
