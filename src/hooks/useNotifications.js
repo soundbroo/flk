@@ -3,30 +3,36 @@ import { useState, useEffect } from "react";
 import { NOTIFICATION_DURATION } from "../constants";
 
 const useNotifications = () => {
+  const defaultStatus = "success";
   const [notifications, setNotifications] = useState([]);
+  const [status, setStatus] = useState(defaultStatus);
   const [isNotificationActive, setNotificationActive] = useState(false);
-  const [isNotificationHovered, setNotificationHovered] = useState(false);
+  // const [isNotificationHovered, setNotificationHovered] = useState(false);
 
-  const handleOpenNotification = (newNotification) => {
-    setNotifications([...notifications, ...newNotification]);
+  const handleOpenNotification = (newNotifications, status) => {
+    setNotifications([...notifications, ...newNotifications]);
+    status && setStatus(status);
     setNotificationActive(true);
   };
 
   const handleCloseNotification = () => {
     setNotificationActive(false);
-    setNotifications([]);
+    setTimeout(() => {
+      setNotifications([]);
+      setStatus(defaultStatus);
+    }, 500);
   };
 
-  const handleHoverNotification = () => setNotificationHovered(true);
-  const handleUnhoverNotification = () => setNotificationHovered(false);
+  // const handleHoverNotification = () => setNotificationHovered(true);
+  // const handleUnhoverNotification = () => setNotificationHovered(false);
 
   useEffect(() => {
     let timer;
     if (isNotificationActive) {
-      timer = setTimeout(() => {
-        setNotificationActive(false);
-        setNotifications([]);
-      }, NOTIFICATION_DURATION);
+      timer = setTimeout(
+        () => handleCloseNotification(),
+        NOTIFICATION_DURATION
+      );
     }
     if (!isNotificationActive && timer) {
       clearTimeout(timer);
@@ -36,12 +42,13 @@ const useNotifications = () => {
 
   return [
     notifications,
+    status,
     isNotificationActive,
-    isNotificationHovered,
+    // isNotificationHovered,
     handleOpenNotification,
     handleCloseNotification,
-    handleHoverNotification,
-    handleUnhoverNotification,
+    // handleHoverNotification,
+    // handleUnhoverNotification,
   ];
 };
 

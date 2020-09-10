@@ -24,12 +24,10 @@ function App() {
 
   const [
     notifications,
+    status,
     isNotificationActive,
-    isNotificationHovered,
     handleOpenNotification,
     handleCloseNotification,
-    handleHoverNotification,
-    handleUnhoverNotification,
   ] = useNotifications();
 
   const filteredFiles = files.map((file) => {
@@ -70,10 +68,9 @@ function App() {
       <Notification
         title="Тестовый заголовок"
         notifications={notifications}
+        status={status}
         isActive={isNotificationActive}
         close={handleCloseNotification}
-        mouseEnter={handleHoverNotification}
-        mouseLeave={handleUnhoverNotification}
       />
       <FilesViewer viewer={viewer} close={handleCloseViewer} />
     </div>

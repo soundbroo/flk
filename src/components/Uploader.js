@@ -10,24 +10,20 @@ const Uploader = ({
 }) => {
   const [dragging, setDragging] = useState(false);
 
-  const handleChange = (newfiles) =>
+  const upload = (files) =>
     updateFilesState(
-      newfiles,
+      files,
       setFiles,
       checkResults,
       setCheckResults,
       openNotification
     );
+
+  const handleChange = (newfiles) => upload(newfiles);
   const handleDrop = (e) => {
     e.preventDefault();
     setDragging(false);
-    updateFilesState(
-      e.dataTransfer.files,
-      setFiles,
-      checkResults,
-      setCheckResults,
-      openNotification
-    );
+    upload(e.dataTransfer.files);
   };
   const handleDragEnter = () => setDragging(true);
   const handleDragLeave = (e) => {

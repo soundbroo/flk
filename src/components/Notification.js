@@ -1,26 +1,24 @@
 import React from "react";
 
-import successFilledIcon from "../images/success-filled.svg";
 import closeIcon from "../images/close.svg";
 
-import { NOTIFICATION_DURATION } from "../constants";
+import {
+  NOTIFICATION_DURATION,
+  NOTIFICATIONS_ICONS,
+  NOTIFICATIONS_COLORS,
+} from "../constants";
 
 const Notification = ({
   title = "",
   notifications = [],
+  status,
   isActive,
   close,
-  mouseEnter,
-  mouseLeave,
 }) => (
-  <div
-    className={`notification${isActive ? " notification_active" : ""}`}
-    onMouseEnter={mouseEnter}
-    onMouseLeave={mouseLeave}
-  >
+  <div className={`notification${isActive ? " notification_active" : ""}`}>
     <div className="notification__header">
       <div>
-        <img src={successFilledIcon} alt="notification status" />
+        <img src={NOTIFICATIONS_ICONS[status]} alt="notification status" />
         <span>{title}</span>
       </div>
       <button className="close-btn" type="button" onClick={close}>
@@ -36,6 +34,7 @@ const Notification = ({
       className="notification__timer"
       style={{
         animation: isActive ? `${NOTIFICATION_DURATION / 1000}s timer` : "none",
+        background: NOTIFICATIONS_COLORS[status],
       }}
     />
   </div>

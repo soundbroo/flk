@@ -23,11 +23,11 @@ const FilesViewer = ({
       ) : null}
       {asserts ? (
         <div className="files-viewer__asserts">
-          <ul>
-            {asserts.map((assert) => (
-              <li className="files-viewer__asserts-item">{assert}</li>
-            ))}
-          </ul>
+          {asserts.map((assert, index) => (
+            <span className="files-viewer__asserts-item">{`${
+              index + 1
+            }. ${assert}`}</span>
+          ))}
         </div>
       ) : null}
     </div>

@@ -93,6 +93,7 @@ export const getUploadNotifications = ({
   filesAdded,
 }) => {
   const notifications = [];
+  let warning = 0;
 
   // УВЕДОМЛЕНИЕ: какие файлы не проходят по формату
   if (nonValidFormat.length) {
@@ -104,24 +105,28 @@ export const getUploadNotifications = ({
       multiple ? "ы" : ""
     }, так как име${multiple ? "ют" : "ет"} неподдерживаемый формат`;
     notifications.push(notification);
+    warning++;
   }
 
   // УВЕДОМЛЕНИЕ: файлов не должно быть больше 10
-  if (notMoreThenTenFiles > MAX_FILES_TO_UPLOAD)
+  if (notMoreThenTenFiles > MAX_FILES_TO_UPLOAD) {
     notifications.push(
       `Слишком много файлов, будут загружены первые ${MAX_FILES_TO_UPLOAD}`
     );
+    warning++;
+  }
 
   // УВЕДОМЛЕНИЕ: вес файлов не должен превышать 10мб
   if (tooMuchSize > 0) {
     const notification = `Общий размер файлов превышает ${MAX_FILES_SIZE_TEXT}, будут добавлены последние ${filesAdded}`;
     notifications.push(notification);
+    warning++;
   }
 
   // УВЕДОМЛЕНИЕ: файлов успешно добавлено
   if (filesAdded) notifications.push(`Файлов успешно добавлено: ${filesAdded}`);
 
-  return notifications;
+  return warning ? { notifications, status: "warning" } : { notifications };
 };
 
 export const sendData = async (files) => {
@@ -138,13 +143,17 @@ export const updateFilesState = (
 ) => {
   const { readyFiles, notificationData } = upload(files);
 
+  const { notifications, status } = getUploadNotifications(notificationData);
+  status
+    ? openNotification(notifications, status)
+    : openNotification(notifications);
+
   setFiles((prevFiles) => {
     return [...prevFiles, ...readyFiles];
   });
 
   sendData(readyFiles).then(({ data, status }) => {
     if (status === 200) {
-      openNotification(getUploadNotifications(notificationData));
       setCheckResults((prevFiles) => {
         return { ...prevFiles, ...data };
       });
@@ -164,13 +173,23 @@ export const updateFilesState = (
         ];
       });
     } else {
-      // Todo: check and fix
-      openNotification([data.err_description]);
+      openNotification([data.err_description], "error");
+      const currentNextResults = Object.fromEntries(
+        readyFiles.map(({ meta: { oid } }) => [oid, { ok: "error" }])
+      );
+      setCheckResults((prevFiles) => {
+        return {
+          ...prevFiles,
+          ...currentNextResults,
+        };
+      });
       setFiles((prevFiles) => {
+        const newCheckResults = { ...checkResults, ...currentNextResults };
         return [
           ...prevFiles.map((file) => {
-            const { status } = data;
-            console.log(status);
+            const { ok: status } = {
+              ...newCheckResults[file.meta.oid],
+            };
             return {
               ...file,
               check: { ...file.check, status },
