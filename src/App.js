@@ -65,7 +65,6 @@ function App() {
         />
       </div>
       <Notification
-        title="Тестовый заголовок"
         notifications={notifications}
         status={status}
         isActive={isNotificationActive}

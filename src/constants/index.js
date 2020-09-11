@@ -45,3 +45,9 @@ export const NOTIFICATIONS_COLORS = {
   warning: "#e8a100",
   error: "#ff2f00",
 };
+
+export const NOTIFICATIONS_TITLES = {
+  success: "Файлы успешно загружены",
+  warning: "Внимание!",
+  error: "Ошибка!",
+};

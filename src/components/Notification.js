@@ -6,20 +6,15 @@ import {
   NOTIFICATION_DURATION,
   NOTIFICATIONS_ICONS,
   NOTIFICATIONS_COLORS,
+  NOTIFICATIONS_TITLES,
 } from "../constants";
 
-const Notification = ({
-  title = "",
-  notifications = [],
-  status,
-  isActive,
-  close,
-}) => (
+const Notification = ({ notifications = [], status, isActive, close }) => (
   <div className={`notification${isActive ? " notification_active" : ""}`}>
     <div className="notification__header">
       <div>
         <img src={NOTIFICATIONS_ICONS[status]} alt="notification status" />
-        <span>{title}</span>
+        <span>{NOTIFICATIONS_TITLES[status]}</span>
       </div>
       <button className="close-btn" type="button" onClick={close}>
         <img src={closeIcon} alt="close notification" />
