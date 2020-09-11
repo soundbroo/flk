@@ -176,6 +176,65 @@ export const sendData = async (files) => {
   return await axios.checkFiles(files);
 };
 
+export const successUpdate = (
+  data,
+  prevCheckResults,
+  setCheckResults,
+  setFiles
+) => {
+  setCheckResults((prevFiles) => {
+    return { ...prevFiles, ...data };
+  });
+  setFiles((prevFiles) => {
+    const newCheckResults = { ...prevCheckResults, ...data };
+    return [
+      ...prevFiles.map((file) => {
+        const { ok: status, direction, asserts } = {
+          ...newCheckResults[file.meta.oid],
+        };
+        return {
+          ...file,
+          check: { ...file.check, status, direction, asserts },
+        };
+      }),
+    ];
+  });
+};
+
+export const failUpdate = (
+  data,
+  prevCheckResults,
+  files,
+  openNotification,
+  setCheckResults,
+  setFiles
+) => {
+  openNotification([data.err_description], "error");
+  const currentResults = Object.fromEntries(
+    files.map(({ meta: { oid } }) => [oid, { ok: "error" }])
+  );
+  setCheckResults((prevFiles) => {
+    return {
+      ...prevFiles,
+      ...currentResults,
+    };
+  });
+  setFiles((prevFiles) => {
+    const newCheckResults = { ...prevCheckResults, ...currentResults };
+    return [
+      ...prevFiles.map((file) => {
+        const { ok: status } = {
+          ...newCheckResults[file.meta.oid],
+        };
+        return {
+          ...file,
+          check: { ...file.check, status },
+        };
+      }),
+    ];
+  });
+};
+
 export const updateFilesState = (
   files,
   currentFiles,
@@ -190,6 +249,7 @@ export const updateFilesState = (
   );
 
   const { notifications, status } = getUploadNotifications(notificationData);
+
   status
     ? openNotification(notifications, status)
     : openNotification(notifications);
@@ -199,49 +259,15 @@ export const updateFilesState = (
   });
 
   sendData(readyFiles).then(({ data, status }) => {
-    if (status === 200) {
-      setCheckResults((prevFiles) => {
-        return { ...prevFiles, ...data };
-      });
-      setFiles((prevFiles) => {
-        const newCheckResults = { ...checkResults, ...data };
-        return [
-          ...prevFiles.map((file) => {
-            const { ok: status, direction, asserts } = {
-              ...newCheckResults[file.meta.oid],
-            };
-            return {
-              ...file,
-              check: { ...file.check, status, direction, asserts },
-            };
-          }),
-        ];
-      });
-    } else {
-      openNotification([data.err_description], "error");
-      const currentNextResults = Object.fromEntries(
-        readyFiles.map(({ meta: { oid } }) => [oid, { ok: "error" }])
-      );
-      setCheckResults((prevFiles) => {
-        return {
-          ...prevFiles,
-          ...currentNextResults,
-        };
-      });
-      setFiles((prevFiles) => {
-        const newCheckResults = { ...checkResults, ...currentNextResults };
-        return [
-          ...prevFiles.map((file) => {
-            const { ok: status } = {
-              ...newCheckResults[file.meta.oid],
-            };
-            return {
-              ...file,
-              check: { ...file.check, status },
-            };
-          }),
-        ];
-      });
-    }
+    if (status === 200)
+      return successUpdate(data, checkResults, setCheckResults, setFiles);
+    return failUpdate(
+      data,
+      checkResults,
+      readyFiles,
+      openNotification,
+      setCheckResults,
+      setFiles
+    );
   });
 };
