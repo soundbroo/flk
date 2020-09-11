@@ -6,6 +6,10 @@ body {
   background: #f2f5fa;
 }
 
+* {
+  scrollbar-width: thin;
+}
+
 *::-webkit-scrollbar {
   width: 6px;
   height: 6px;

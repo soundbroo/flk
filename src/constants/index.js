@@ -9,6 +9,8 @@ import processingIcon from "../images/status-loading.svg";
 export const MAX_FILES_SIZE = 10e6;
 export const MAX_FILES_TO_UPLOAD = 10;
 
+export const MAX_READABLE_FILE_SIZE = 10e4;
+
 export const STATUSES = {
   true: "Проверка пройдена",
   false: "Проверка не пройдена",

@@ -39,7 +39,7 @@ export const addFilesMeta = (files) =>
     return {
       file,
       meta: {
-        oid: uuidv4().replaceAll("-", ""),
+        oid: uuidv4().replace(/-/g, ""),
         soft: "web",
         protocol: "json",
         title: file.name,
@@ -52,7 +52,25 @@ export const addFilesMeta = (files) =>
     };
   });
 
-export const upload = (newFiles) => {
+export const checkAlreadyUploadedFiles = (prevFiles, newFiles) => {
+  let alreadyUploadedFiles = [];
+  newFiles.forEach(({ name, size }) => {
+    prevFiles.forEach(({ file: { name: currentName, size: currentSize } }) => {
+      if (name === currentName && size === currentSize)
+        alreadyUploadedFiles = [...alreadyUploadedFiles, { name, size }];
+    });
+  });
+  return alreadyUploadedFiles;
+};
+
+export const deleteAlreadyUploadedFiles = (uploadedFiles, newFiles) =>
+  newFiles.filter((file) =>
+    uploadedFiles.every(
+      ({ name, size }) => name !== file.name && size !== file.size
+    )
+  );
+
+export const prepareFilesToupload = (newFiles, currentFiles) => {
   const filesArray = Object.values(newFiles);
 
   // Проверяем файлы, неподходящие по формату
@@ -64,11 +82,21 @@ export const upload = (newFiles) => {
     ["txt", "xml"].includes(name.slice(-3, name.length))
   );
 
+  // Проверяем и удаляем повторно загружаемые файлы
+  const alreadyUploadedFiles = checkAlreadyUploadedFiles(
+    currentFiles,
+    filesArray
+  );
+
+  const notUploadedValidFormatFiles = alreadyUploadedFiles.length
+    ? deleteAlreadyUploadedFiles(alreadyUploadedFiles, validFormatFiles)
+    : validFormatFiles;
+
   // Массив файлов обрезаем, если число файлов больше 10
   const filesToUploadArray =
-    validFormatFiles.length > MAX_FILES_TO_UPLOAD
-      ? validFormatFiles.splice(0, MAX_FILES_TO_UPLOAD)
-      : validFormatFiles;
+    notUploadedValidFormatFiles.length > MAX_FILES_TO_UPLOAD
+      ? notUploadedValidFormatFiles.splice(0, MAX_FILES_TO_UPLOAD)
+      : notUploadedValidFormatFiles;
 
   // Проверяем общий размер загружаемых файлов и исключаем лишние
   const { oversizeValue, validFiles } = spliceFilesArrayToValidSize(
@@ -78,9 +106,10 @@ export const upload = (newFiles) => {
   const readyFiles = addFilesMeta(validFiles);
   const notificationData = {
     nonValidFormat: nonValidFormatedFiles,
-    notMoreThenTenFiles: validFormatFiles.length,
+    notMoreThenTenFiles: notUploadedValidFormatFiles.length,
     tooMuchSize: oversizeValue,
     filesAdded: validFiles.length,
+    alreadyUploadedFiles: alreadyUploadedFiles.map(({ name }) => name),
   };
 
   return { readyFiles, notificationData };
@@ -91,9 +120,15 @@ export const getUploadNotifications = ({
   notMoreThenTenFiles,
   tooMuchSize,
   filesAdded,
+  alreadyUploadedFiles,
 }) => {
   const notifications = [];
   let warning = 0;
+
+  const pushWarningNotification = (notification) => {
+    notifications.push(notification);
+    warning++;
+  };
 
   // УВЕДОМЛЕНИЕ: какие файлы не проходят по формату
   if (nonValidFormat.length) {
@@ -104,24 +139,31 @@ export const getUploadNotifications = ({
     } ${notificationFiles} не был${multiple ? "и" : ""} загружен${
       multiple ? "ы" : ""
     }, так как име${multiple ? "ют" : "ет"} неподдерживаемый формат`;
-    notifications.push(notification);
-    warning++;
+    pushWarningNotification(notification);
+  }
+
+  // УВЕДОМЛЕНИЕ: файлы уже были загружены
+  if (alreadyUploadedFiles.length) {
+    const multiple = alreadyUploadedFiles.length > 1;
+    const notification = `Файл${
+      multiple ? "ы" : ""
+    } ${alreadyUploadedFiles.join(", ")} уже был${
+      multiple ? "и" : ""
+    } загружен${multiple ? "ы" : ""}`;
+    pushWarningNotification(notification);
   }
 
   // УВЕДОМЛЕНИЕ: файлов не должно быть больше 10
-  if (notMoreThenTenFiles > MAX_FILES_TO_UPLOAD) {
-    notifications.push(
+  if (notMoreThenTenFiles > MAX_FILES_TO_UPLOAD)
+    pushWarningNotification(
       `Слишком много файлов, будут загружены первые ${MAX_FILES_TO_UPLOAD}`
     );
-    warning++;
-  }
 
   // УВЕДОМЛЕНИЕ: вес файлов не должен превышать 10мб
-  if (tooMuchSize > 0) {
-    const notification = `Общий размер файлов превышает ${MAX_FILES_SIZE_TEXT}, будут добавлены последние ${filesAdded}`;
-    notifications.push(notification);
-    warning++;
-  }
+  if (tooMuchSize > 0)
+    pushWarningNotification(
+      `Общий размер файлов превышает ${MAX_FILES_SIZE_TEXT}, будут добавлены последние ${filesAdded}`
+    );
 
   // УВЕДОМЛЕНИЕ: файлов успешно добавлено
   if (filesAdded) notifications.push(`Файлов успешно добавлено: ${filesAdded}`);
@@ -136,12 +178,16 @@ export const sendData = async (files) => {
 
 export const updateFilesState = (
   files,
+  currentFiles,
   setFiles,
   checkResults,
   setCheckResults,
   openNotification
 ) => {
-  const { readyFiles, notificationData } = upload(files);
+  const { readyFiles, notificationData } = prepareFilesToupload(
+    files,
+    currentFiles
+  );
 
   const { notifications, status } = getUploadNotifications(notificationData);
   status
@@ -158,7 +204,6 @@ export const updateFilesState = (
         return { ...prevFiles, ...data };
       });
       setFiles((prevFiles) => {
-        console.log("checkResults", checkResults);
         const newCheckResults = { ...checkResults, ...data };
         return [
           ...prevFiles.map((file) => {

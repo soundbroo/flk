@@ -18,8 +18,6 @@ function App() {
   const [checkResults, setCheckResults] = useState({});
   const [search, setSearch] = useState("");
 
-  console.log("checkResultsApp", checkResults);
-
   const [viewer, handleOpenViewer, handleCloseViewer] = useViewer();
 
   const [
@@ -45,6 +43,7 @@ function App() {
           Проверка файлов отчетности ФНС, ПФР, ФСС, РАР
         </div>
         <Uploader
+          currentFiles={files}
           setFiles={setFiles}
           checkResults={checkResults}
           setCheckResults={setCheckResults}

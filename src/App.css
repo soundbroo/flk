@@ -203,6 +203,7 @@
 }
 
 .files-list__item {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -284,7 +285,7 @@
 
 .files-list__item__status {
   font-size: 14px;
-  line-height: 20px;
+  line-height: 16px;
   color: rgba(42, 73, 94, 0.5);
   text-align: center;
   flex: 2;
@@ -453,16 +454,44 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 12px;
 }
 
-.files-viewer__header > span {
+.files-viewer__header__title {
+  justify-content: space-between;
+  width: 100%;
+}
+
+.files-viewer__header__title,
+.files-viewer__header__title_name-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.files-viewer__header__title_name-wrapper {
   font-weight: 500;
   font-size: 14px;
   line-height: 17px;
   color: #0f1b4c;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+.files-viewer__header__title__name {
+  word-break: break-all;
+}
+
+.files-viewer__header__title__status {
+  border-radius: 50px;
+  border-style: solid;
+  border-width: 1px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 14px;
+  margin: 0 9px;
+  padding: 4px 6px;
+}
+
+.files-viewer__header__title > span > img {
+  margin-right: 12px;
 }
 
 .files-viewer__content {
@@ -485,7 +514,8 @@
 .files-viewer__asserts {
   display: flex;
   flex-direction: column;
-  background: rgb(250, 250, 250);
+  color: #3c1616;
+  background: rgb(255 240 240);
   padding: 12px;
   line-height: 18px;
   overflow: auto;
@@ -506,7 +536,7 @@
 }
 
 .files-list__control_shake:hover {
-  animation: 0.3s rotation;
+  animation: rotation 0.3s linear;
 }
 
 @keyframes rotation {
@@ -524,6 +554,39 @@
 
   100% {
     transform: rotate(0);
+  }
+}
+
+.tooltip {
+  position: absolute;
+  padding: 9px 16px;
+  background: #fff;
+  top: 75%;
+  left: 80px;
+  max-width: 40%;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  z-index: 1;
+  word-break: break-all;
+  animation: tooltip 0.1s linear;
+}
+
+.tooltip_last {
+  top: -100%;
+}
+
+@keyframes tooltip {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 

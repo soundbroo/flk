@@ -1,5 +1,7 @@
 import React from "react";
 
+import Tooltip from "./Tooltip";
+
 import searchIcon from "../images/search.svg";
 import { ReactComponent as ViewIcon } from "../images/view.svg";
 import { ReactComponent as DeleteIcon } from "../images/delete.svg";
@@ -7,6 +9,8 @@ import { ReactComponent as DeleteIcon } from "../images/delete.svg";
 import { readFile } from "../utils/fileReader";
 
 import { STATUSES, STATUSES_COLORS, STATUSES_ICONS } from "../constants";
+
+import useTooltip from "../hooks/useTooltip";
 
 const FilesList = ({
   files,
@@ -17,8 +21,11 @@ const FilesList = ({
   setSearch,
   openViewer,
 }) => {
+  const [tooltip, showTooltip, closeTooltip] = useTooltip(files);
+
   const handleSearch = (e) => setSearch(e.target.value);
-  const handleView = (file, assetrs) => readFile(file, assetrs, openViewer);
+  const handleView = (file, assetrs, status) =>
+    readFile(file, assetrs, status, openViewer);
   const handleDelete = (fileKey) => {
     const newFiles = files.filter(({ meta: { oid } }) => oid !== fileKey);
     setFiles(newFiles);
@@ -38,13 +45,17 @@ const FilesList = ({
       <div className="files-list__items">
         <div>
           {filteredFiles.map(
-            ({
-              file,
-              meta: { oid },
-              hidden,
-              check: { status: responseStatus, direction, asserts },
-            }) => {
+            (
+              {
+                file,
+                meta: { oid },
+                hidden,
+                check: { status: responseStatus, direction, asserts },
+              },
+              index
+            ) => {
               const status = String(responseStatus);
+              const statusText = STATUSES[status];
               return (
                 <div
                   key={oid}
@@ -60,7 +71,12 @@ const FilesList = ({
                         status === "null" ? " circle-animation" : ""
                       }`}
                     />
-                    <span>{file.name}</span>
+                    <span
+                      onMouseEnter={() => showTooltip(oid)}
+                      onMouseLeave={() => closeTooltip(oid)}
+                    >
+                      {file.name}
+                    </span>
                   </span>
                   <span className="files-list__item__direction">
                     {direction || null}
@@ -69,13 +85,13 @@ const FilesList = ({
                     className="files-list__item__status"
                     style={{ color: STATUSES_COLORS[status] }}
                   >
-                    {STATUSES[status]}
+                    {statusText}
                   </span>
                   <div className="files-list__item__control">
                     <button
                       type="button"
                       className="files-list__control files-list__control_view"
-                      onClick={() => handleView(file, asserts)}
+                      onClick={() => handleView(file, asserts, status)}
                     >
                       <ViewIcon />
                     </button>
@@ -87,6 +103,12 @@ const FilesList = ({
                       <DeleteIcon />
                     </button>
                   </div>
+                  {tooltip[oid] ? (
+                    <Tooltip
+                      title={tooltip[oid]}
+                      lastElem={files.length > 1 && files.length === index + 1}
+                    />
+                  ) : null}
                 </div>
               );
             }

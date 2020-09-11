@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { updateFilesState } from "../utils/uploader";
 
 const Uploader = ({
+  currentFiles,
   setFiles,
   checkResults,
   setCheckResults,
@@ -13,6 +14,7 @@ const Uploader = ({
   const upload = (files) =>
     updateFilesState(
       files,
+      currentFiles,
       setFiles,
       checkResults,
       setCheckResults,
