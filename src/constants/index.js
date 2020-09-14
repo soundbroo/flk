@@ -11,24 +11,26 @@ export const MAX_FILES_TO_UPLOAD = 10;
 
 export const MAX_READABLE_FILE_SIZE = 10e4;
 
+export const AVAILABLE_FORMATS = ["txt", "xml"];
+
 export const STATUSES = {
-  true: "Проверка пройдена",
-  false: "Проверка не пройдена",
-  error: "Ошибка",
+  true: "Не содержит ошибок",
+  false: "Содержит ошибки",
+  error: "Проверка не реализована",
   null: "Проверка...",
 };
 
 export const STATUSES_COLORS = {
   true: "#1CAD1C",
-  false: "#e8a100",
-  error: "#ff2f00",
+  false: "#ff2f00",
+  error: "#e8a100",
   null: "#2a495e",
 };
 
 export const STATUSES_ICONS = {
   true: successOutlinedIcon,
-  false: warningOutlinedIcon,
-  error: errorOutlinedIcon,
+  false: errorOutlinedIcon,
+  error: warningOutlinedIcon,
   null: processingIcon,
 };
 

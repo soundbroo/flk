@@ -2,36 +2,47 @@ import { v4 as uuidv4 } from "uuid";
 
 import AxiosService from "../api";
 
-import { MAX_FILES_SIZE, MAX_FILES_TO_UPLOAD } from "../constants";
+import {
+  MAX_FILES_SIZE,
+  MAX_FILES_TO_UPLOAD,
+  AVAILABLE_FORMATS,
+} from "../constants";
 
 const MAX_FILES_SIZE_TEXT = `${MAX_FILES_SIZE / 1e6} мб`;
 
-export const getFilesToSpliceCount = (oversizeValue, filesToSplice) => {
+export const sortFilesBySizeDesc = (files) =>
+  files.sort(({ size: sizeA }, { size: sizeB }) => sizeB - sizeA);
+
+export const getFilesToSpliceCount = (oversizeValue, files) => {
   let count = 0;
   let oversize = oversizeValue;
-  const files = filesToSplice.reverse();
+  console.log(
+    "oversize",
+    oversize,
+    "files",
+    files.map(({ size }) => size)
+  );
   files.forEach(({ size }) => {
     if (oversize > 0) {
       count++;
       oversize -= size;
     }
   });
-  return count - 1;
+  console.log("count", count);
+  return count;
 };
 
 export const spliceFilesArrayToValidSize = (files) => {
   // Проверяем общий размер загружаемых файлов
-  const filesSize = files.reduce((acc, { size }) => acc + size, 0);
+  const sortedFiles = sortFilesBySizeDesc(files);
+  const filesSize = sortedFiles.reduce((acc, { size }) => acc + size, 0);
   const oversizeValue = filesSize - MAX_FILES_SIZE;
 
   if (oversizeValue > 0) {
-    const spliceCount = getFilesToSpliceCount(oversizeValue, files);
-    const validSizeFiles = files.splice(
-      files.length - spliceCount,
-      spliceCount
-    );
-    return { oversizeValue, validFiles: validSizeFiles };
-  } else return { oversizeValue, validFiles: files };
+    const spliceCount = getFilesToSpliceCount(oversizeValue, sortedFiles);
+    sortedFiles.splice(0, spliceCount);
+    return { oversizeValue, validFiles: sortedFiles };
+  } else return { oversizeValue, validFiles: sortedFiles };
 };
 
 export const addFilesMeta = (files) =>
@@ -54,33 +65,54 @@ export const addFilesMeta = (files) =>
 
 export const checkAlreadyUploadedFiles = (prevFiles, newFiles) => {
   let alreadyUploadedFiles = [];
-  newFiles.forEach(({ name, size }) => {
-    prevFiles.forEach(({ file: { name: currentName, size: currentSize } }) => {
-      if (name === currentName && size === currentSize)
-        alreadyUploadedFiles = [...alreadyUploadedFiles, { name, size }];
-    });
+  newFiles.forEach(({ name, size, lastModified }) => {
+    prevFiles.forEach(
+      ({
+        file: {
+          name: currentName,
+          size: currentSize,
+          lastModified: currentLastModified,
+        },
+      }) => {
+        if (
+          name === currentName &&
+          size === currentSize &&
+          lastModified === currentLastModified
+        )
+          alreadyUploadedFiles = [...alreadyUploadedFiles, { name, size }];
+      }
+    );
   });
   return alreadyUploadedFiles;
 };
 
 export const deleteAlreadyUploadedFiles = (uploadedFiles, newFiles) =>
-  newFiles.filter((file) =>
-    uploadedFiles.every(
-      ({ name, size }) => name !== file.name && size !== file.size
-    )
+  newFiles.filter(
+    ({
+      name: currentName,
+      size: currentSize,
+      lastModified: currentLastModified,
+    }) =>
+      uploadedFiles.every(
+        ({ name, size, lastModified }) =>
+          name !== currentName &&
+          size !== currentSize &&
+          lastModified !== currentLastModified
+      )
   );
 
-export const prepareFilesToupload = (newFiles, currentFiles) => {
+export const checkFormat = (name) =>
+  AVAILABLE_FORMATS.includes(name.toLowerCase().slice(-3, name.length));
+
+export const prepareFilesToUpload = (newFiles, currentFiles) => {
   const filesArray = Object.values(newFiles);
 
   // Проверяем файлы, неподходящие по формату
   const nonValidFormatedFiles = filesArray
-    .filter(({ name }) => !["txt", "xml"].includes(name.slice(-3, name.length)))
+    .filter(({ name }) => !checkFormat(name))
     .map(({ name }) => name);
 
-  const validFormatFiles = filesArray.filter(({ name }) =>
-    ["txt", "xml"].includes(name.slice(-3, name.length))
-  );
+  const validFormatFiles = filesArray.filter(({ name }) => checkFormat(name));
 
   // Проверяем и удаляем повторно загружаемые файлы
   const alreadyUploadedFiles = checkAlreadyUploadedFiles(
@@ -160,10 +192,19 @@ export const getUploadNotifications = ({
     );
 
   // УВЕДОМЛЕНИЕ: вес файлов не должен превышать 10мб
-  if (tooMuchSize > 0)
-    pushWarningNotification(
-      `Общий размер файлов превышает ${MAX_FILES_SIZE_TEXT}, будут добавлены последние ${filesAdded}`
-    );
+  if (tooMuchSize > 0) {
+    const getNotification = () => {
+      switch (filesAdded) {
+        case 0:
+          return `Общий размер файлов превышает ${MAX_FILES_SIZE_TEXT}`;
+        case 1:
+          return `Общий размер файлов превышает ${MAX_FILES_SIZE_TEXT}, будет добавлен 1 файл`;
+        default:
+          return `Общий размер файлов превышает ${MAX_FILES_SIZE_TEXT}, добавлено файлов: ${filesAdded}`;
+      }
+    };
+    pushWarningNotification(getNotification());
+  }
 
   // УВЕДОМЛЕНИЕ: файлов успешно добавлено
   if (filesAdded) notifications.push(`Файлов успешно добавлено: ${filesAdded}`);
@@ -243,7 +284,8 @@ export const updateFilesState = (
   setCheckResults,
   openNotification
 ) => {
-  const { readyFiles, notificationData } = prepareFilesToupload(
+  if (!files.length) return;
+  const { readyFiles, notificationData } = prepareFilesToUpload(
     files,
     currentFiles
   );

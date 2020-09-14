@@ -10,7 +10,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.3",
-    "react-syntax-highlighter": "^13.5.3",
+    "react-xml-viewer": "^1.1.0",
     "uuid": "^8.3.0"
   },
   "scripts": {
