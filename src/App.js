@@ -22,11 +22,13 @@ function App() {
 
   const [
     notifications,
-    status,
-    isNotificationActive,
+    transform,
     handleOpenNotification,
     handleCloseNotification,
+    increaseNotificationsTransform,
   ] = useNotifications();
+
+  console.log(notifications);
 
   const filteredFiles = files.map((file) => {
     return Object.assign(file, {
@@ -64,12 +66,21 @@ function App() {
           openViewer={handleOpenViewer}
         />
       </div>
-      <Notification
-        notifications={notifications}
-        status={status}
-        isActive={isNotificationActive}
-        close={handleCloseNotification}
-      />
+      <div className="notifications" style={{ height: `${transform}px` }}>
+        {Object.entries(notifications).map(
+          ([id, { notifications, status, removeTransition }]) => (
+            <Notification
+              key={id}
+              id={id}
+              notifications={notifications}
+              status={status}
+              remove={removeTransition}
+              close={handleCloseNotification}
+              increaseTransform={increaseNotificationsTransform}
+            />
+          )
+        )}
+      </div>
       <FilesViewer viewer={viewer} close={handleCloseViewer} />
     </div>
   );
