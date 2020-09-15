@@ -34,7 +34,7 @@ export const STATUSES_ICONS = {
   null: processingIcon,
 };
 
-export const NOTIFICATION_DURATION = 7000;
+export const NOTIFICATION_DURATION = 6000;
 export const NOTIFICATION_HIDE_DURATION = 300;
 
 export const NOTIFICATIONS_ICONS = {

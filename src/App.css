@@ -364,7 +364,7 @@
 .notification {
   position: relative;
   background: #ffffff;
-  box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.22);
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.22);
   border-radius: 12px;
   margin-bottom: 12px;
   margin-left: auto;
@@ -391,7 +391,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 24px 30px;
+  padding: 16px 21px 12px 21px;
 }
 
 .notification__header > div {
@@ -399,27 +399,31 @@
 }
 
 .notification__header > div > img {
-  margin-right: 15px;
+  margin-right: 12px;
 }
 
 .notification__header span {
   font-weight: 500;
-  font-size: 20px;
-  line-height: 28px;
+  font-size: 18px;
+  line-height: 20px;
   display: flex;
   align-items: center;
   color: #000000;
 }
 
+.notification__header > button {
+  margin-left: 21px;
+}
+
 .notification__content {
   display: flex;
   flex-direction: column;
-  margin-bottom: 24px;
-  padding: 0 30px;
+  margin-bottom: 18px;
+  padding: 0 21px;
 }
 
 .notification__content > span {
-  font-size: 16px;
+  font-size: 14px;
   line-height: 23px;
   color: #2a495e;
   word-break: break-word;
@@ -609,7 +613,7 @@
 }
 
 .tooltip_last {
-  top: -100%;
+  top: -70%;
 }
 
 @keyframes tooltip {

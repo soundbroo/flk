@@ -26,8 +26,6 @@ const Notification = ({
 
   const [height, setHeight] = useState(null);
 
-  const handleClose = () => close(id, height);
-
   useEffect(() => {
     const notificationRef = reference?.current;
     if (notificationRef) {
@@ -39,10 +37,10 @@ const Notification = ({
   useEffect(() => {
     if (height) {
       increaseTransform(id, height);
-      const timer = setTimeout(handleClose, NOTIFICATION_DURATION);
+      const timer = setTimeout(() => close(id, height), NOTIFICATION_DURATION);
       return () => clearTimeout(timer);
     }
-  }, [height]);
+  }, [height, id, increaseTransform, close]);
 
   return (
     <>
@@ -65,7 +63,11 @@ const Notification = ({
             <img src={NOTIFICATIONS_ICONS[status]} alt="notification status" />
             <span>{NOTIFICATIONS_TITLES[status]}</span>
           </div>
-          <button className="close-btn" type="button" onClick={handleClose}>
+          <button
+            className="close-btn"
+            type="button"
+            onClick={() => close(id, height)}
+          >
             <img src={closeIcon} alt="close notification" />
           </button>
         </div>

@@ -28,8 +28,6 @@ function App() {
     increaseNotificationsTransform,
   ] = useNotifications();
 
-  // console.log(notifications);
-
   const filteredFiles = files.map((file) => {
     return Object.assign(file, {
       ...file,
@@ -66,7 +64,10 @@ function App() {
           openViewer={handleOpenViewer}
         />
       </div>
-      <div className="notifications" style={{ height: `${transform}px` }}>
+      <div
+        className="notifications"
+        style={{ height: `${transform}px`, maxHeight: 500 }}
+      >
         {Object.entries(notifications).map(
           ([id, { notifications, status, removeTransition }]) => (
             <Notification

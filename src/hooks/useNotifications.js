@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { NOTIFICATION_HIDE_DURATION } from "../constants";
@@ -21,7 +21,7 @@ const useNotifications = () => {
     });
   };
 
-  const handleCloseNotification = (id, height) => {
+  const handleCloseNotification = useCallback((id, height, duration) => {
     setTransform((prev) => prev - height);
     setNotifications((prevNotifications) => {
       return {
@@ -38,11 +38,11 @@ const useNotifications = () => {
           );
           return Object.fromEntries(newArray);
         }),
-      NOTIFICATION_HIDE_DURATION
+      duration || NOTIFICATION_HIDE_DURATION
     );
-  };
+  }, []);
 
-  const increaseNotificationsTransform = (id, height) => {
+  const increaseNotificationsTransform = useCallback((id, height) => {
     setNotifications((prev) => {
       return {
         ...prev,
@@ -50,7 +50,7 @@ const useNotifications = () => {
       };
     });
     setTransform((prev) => prev + height);
-  };
+  }, []);
   // const handleHoverNotification = () => setNotificationHovered(true);
   // const handleUnhoverNotification = () => setNotificationHovered(false);
 
