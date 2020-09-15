@@ -28,7 +28,7 @@ function App() {
     increaseNotificationsTransform,
   ] = useNotifications();
 
-  console.log(notifications);
+  // console.log(notifications);
 
   const filteredFiles = files.map((file) => {
     return Object.assign(file, {
