@@ -29,11 +29,12 @@ const Notification = ({
   const handleClose = () => close(id, height);
 
   useEffect(() => {
-    if (reference?.current) {
-      const { height } = reference?.current?.getBoundingClientRect();
+    const notificationRef = reference?.current;
+    if (notificationRef) {
+      const { height } = notificationRef?.getBoundingClientRect();
       setHeight(height);
     }
-  }, [reference?.current]);
+  }, [reference]);
 
   useEffect(() => {
     if (height) {
@@ -54,7 +55,6 @@ const Notification = ({
                 ...notificationDynamicStyles,
                 transform: "translateX(600px)",
                 maxHeight: 0,
-                margin: 0,
               }
             : notificationDynamicStyles
         }

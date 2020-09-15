@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-import { NOTIFICATION_HIDE_DURATION, NOTIFICATION_MARGIN } from "../constants";
+import { NOTIFICATION_HIDE_DURATION } from "../constants";
 
 const useNotifications = () => {
   const defaultStatus = "success";
@@ -22,7 +22,7 @@ const useNotifications = () => {
   };
 
   const handleCloseNotification = (id, height) => {
-    setTransform((prev) => prev - height - NOTIFICATION_MARGIN);
+    setTransform((prev) => prev - height);
     setNotifications((prevNotifications) => {
       return {
         ...prevNotifications,
@@ -49,7 +49,7 @@ const useNotifications = () => {
         [id]: { ...prev[id], transform: height },
       };
     });
-    setTransform((prev) => prev + height + NOTIFICATION_MARGIN);
+    setTransform((prev) => prev + height);
   };
   // const handleHoverNotification = () => setNotificationHovered(true);
   // const handleUnhoverNotification = () => setNotificationHovered(false);

@@ -352,8 +352,9 @@
 
 .notifications {
   position: fixed;
-  /* display: flex;
-  flex-direction: column; */
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
   bottom: 12px;
   right: 40px;
   z-index: 7;
@@ -372,7 +373,8 @@
   min-width: 300px;
   max-height: 400px;
   overflow: auto;
-  /* animation: slide 0.5s ease; */
+  flex-shrink: 0;
+  animation: slide 0.5s ease;
 }
 
 @keyframes slide {
@@ -630,12 +632,15 @@
 }
 
 @media (max-width: 626px) {
-  .notification {
+  .notifications {
     bottom: 6px;
     left: 1%;
     right: 1%;
     max-width: 100%;
     width: 98%;
+  }
+  .notification {
+    width: 100%;
   }
   .files-list {
     height: calc(100vh - 444px);
