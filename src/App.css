@@ -247,6 +247,7 @@
   align-items: center;
   flex: 6;
   min-width: 50px;
+  height: 100%;
 }
 
 .files-list__item__name__img {

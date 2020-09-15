@@ -62,6 +62,7 @@ const FilesList = ({
                   className={`files-list__item${
                     hidden ? " files-list__item_hidden" : ""
                   }`}
+                  onMouseLeave={() => closeTooltip(oid)}
                 >
                   <span className="files-list__item__name">
                     <img
@@ -71,10 +72,7 @@ const FilesList = ({
                         status === "null" ? " circle-animation" : ""
                       }`}
                     />
-                    <span
-                      onMouseEnter={() => showTooltip(oid)}
-                      onMouseLeave={() => closeTooltip(oid)}
-                    >
+                    <span onMouseEnter={() => showTooltip(oid)}>
                       {file.name}
                     </span>
                   </span>
